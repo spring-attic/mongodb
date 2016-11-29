@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>mongodb-app-dependencies</artifactId>
-    <version>1.1.0.RELEASE</version>
+    <version>1.1.1.BUILD-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>mongodb-app-dependencies</name>
     <description>Spring Cloud Stream Mongodb App Dependencies</description>
@@ -19,7 +19,7 @@
             <dependency>
                 <groupId>org.springframework.cloud.stream.app</groupId>
                 <artifactId>spring-cloud-starter-stream-source-mongodb</artifactId>
-                <version>1.1.0.RELEASE</version>
+                <version>1.1.1.BUILD-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
