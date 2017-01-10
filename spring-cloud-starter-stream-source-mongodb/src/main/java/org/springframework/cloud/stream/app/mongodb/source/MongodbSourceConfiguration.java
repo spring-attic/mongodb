@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.expression.Expression;
 import org.springframework.expression.common.LiteralExpression;
-import org.springframework.integration.core.MessageSource;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlowBuilder;
 import org.springframework.integration.dsl.IntegrationFlows;
@@ -36,42 +36,51 @@ import org.springframework.messaging.MessageChannel;
 
 /**
  * A starter configuration for MongoDB Source applications.
- * Produces MongoDbMessageSource which polls collection with the query after startup according to the polling properties.
+ * Produces {@link MongoDbMessageSource} which polls collection
+ * with the query after startup according to the polling properties.
  *
  * @author Adam Zwickey
+ * @author Artem Bilan
  *
  */
 @EnableBinding(Source.class)
-@EnableConfigurationProperties({MongodbSourceProperties.class, TriggerPropertiesMaxMessagesDefaultUnlimited.class})
-@Import({ TriggerConfiguration.class })
+@EnableConfigurationProperties({ MongodbSourceProperties.class, TriggerPropertiesMaxMessagesDefaultUnlimited.class })
+@Import(TriggerConfiguration.class)
 public class MongodbSourceConfiguration {
 
-    @Autowired
-    private MongodbSourceProperties config;
+	@Autowired
+	private MongodbSourceProperties config;
 
-    @Autowired
-    @Qualifier(Source.OUTPUT)
-    private MessageChannel output;
+	@Autowired
+	@Qualifier(Source.OUTPUT)
+	private MessageChannel output;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+	@Autowired
+	private MongoTemplate mongoTemplate;
 
-    @Bean
-    protected MessageSource<Object> mongoSource() {
-        MongoDbMessageSource ms = new MongoDbMessageSource(mongoTemplate, new LiteralExpression(config.getQuery()));
-        ms.setCollectionNameExpression(new LiteralExpression(config.getCollection()));
-        ms.setEntityClass(String.class);
-        return ms;
-    }
+	@Bean
+	public IntegrationFlow startFlow() throws Exception {
+		IntegrationFlowBuilder flow = IntegrationFlows.from(mongoSource());
+		if (config.isSplit()) {
+			flow.split();
+		}
+		flow.channel(output);
+		return flow.get();
+	}
 
-    @Bean
-    public IntegrationFlow startFlow() throws Exception {
-        IntegrationFlowBuilder flow =  IntegrationFlows.from(mongoSource());
-        if (config.isSplit()) {
-            flow.split();
-        }
-        flow.channel(output);
-        return flow.get();
-    }
+	/**
+	 * The inheritors can consider to override this method for their purpose or just adjust options
+	 * for the returned instance
+	 * @return a {@link MongoDbMessageSource} instance
+	 */
+	protected MongoDbMessageSource mongoSource() {
+		Expression queryExpression = (this.config.getQueryExpression() != null
+				? this.config.getQueryExpression()
+				: new LiteralExpression(this.config.getQuery()));
+		MongoDbMessageSource mongoDbMessageSource = new MongoDbMessageSource(this.mongoTemplate, queryExpression);
+		mongoDbMessageSource.setCollectionNameExpression(new LiteralExpression(this.config.getCollection()));
+		mongoDbMessageSource.setEntityClass(String.class);
+		return mongoDbMessageSource;
+	}
 
 }

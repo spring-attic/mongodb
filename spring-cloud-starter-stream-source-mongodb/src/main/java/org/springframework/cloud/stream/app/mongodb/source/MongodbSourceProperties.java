@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,51 +18,70 @@ package org.springframework.cloud.stream.app.mongodb.source;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.expression.Expression;
 
 /**
  * @author Adam Zwickey
+ * @author Artem Bilan
  *
  */
 @ConfigurationProperties("mongodb")
 public class MongodbSourceProperties {
 
-    /**
-     * The MongoDB collection to query
-     */
-    private String collection;
-    /**
-     * The MongoDB query
-     */
-    private String query = "{ }";
-    /**
-     * Whether to split the query result as individual messages.
-     */
-    private boolean split = true;
+	/**
+	 * The MongoDB collection to query
+	 */
+	private String collection;
 
-    @NotEmpty(message = "Query is required")
-    public String getQuery() {
-        return query;
-    }
+	/**
+	 * The MongoDB query
+	 */
+	private String query = "{ }";
 
-    public void setQuery(String query) {
-        this.query = query;
-    }
+	/**
+	 * The SpEL expression in MongoDB query DSL style
+	 */
+	private Expression queryExpression;
 
-    public void setCollection(String collection) {
-        this.collection = collection;
-    }
+	/**
+	 * Whether to split the query result as individual messages.
+	 */
+	private boolean split = true;
 
-    @NotBlank(message = "Collection name is required")
-    public String getCollection() {
-        return collection;
-    }
+	@NotEmpty(message = "Query is required")
+	public String getQuery() {
+		return query;
+	}
 
-    public boolean isSplit() {
-        return split;
-    }
+	public void setQuery(String query) {
+		this.query = query;
+	}
 
-    public void setSplit(boolean split) {
-        this.split = split;
-    }
+	public Expression getQueryExpression() {
+		return queryExpression;
+	}
+
+	public void setQueryExpression(Expression queryExpression) {
+		this.queryExpression = queryExpression;
+	}
+
+	public void setCollection(String collection) {
+		this.collection = collection;
+	}
+
+	@NotBlank(message = "Collection name is required")
+	public String getCollection() {
+		return collection;
+	}
+
+	public boolean isSplit() {
+		return split;
+	}
+
+	public void setSplit(boolean split) {
+		this.split = split;
+	}
+
 }

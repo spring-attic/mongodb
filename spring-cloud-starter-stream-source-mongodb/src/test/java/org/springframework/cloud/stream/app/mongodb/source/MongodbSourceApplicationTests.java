@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,41 +16,45 @@
 
 package org.springframework.cloud.stream.app.mongodb.source;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matchers;
-import org.junit.After;
+import org.bson.Document;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.cloud.stream.annotation.Bindings;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
 /**
  * @author Adam Zwickey
+ * @author Artem Bilan
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = { MongodbSourceApplicationTests.MongoSourceApplication.class})
-@TestPropertySource(properties = {"spring.data.mongodb.port=0"})
+@RunWith(SpringRunner.class)
+@SpringBootTest(properties = {
+				"spring.data.mongodb.port=0",
+				"mongodb.collection=testing"
+		})
 @DirtiesContext
 public abstract class MongodbSourceApplicationTests {
 
@@ -58,7 +62,6 @@ public abstract class MongodbSourceApplicationTests {
 	private MongoClient mongo;
 
 	@Autowired
-	@Bindings(MongodbSourceConfiguration.class)
 	protected Source source;
 
 	@Autowired
@@ -66,71 +69,111 @@ public abstract class MongodbSourceApplicationTests {
 
 	@Before
 	public void setUp() {
-		DB db = mongo.getDB("test");
-		DBCollection col = db.createCollection("testing", new BasicDBObject());
-		col.save(new BasicDBObject("greeting", "hello"));
-		col.save(new BasicDBObject("greeting", "hola"));
+		MongoDatabase database = this.mongo.getDatabase("test");
+		database.createCollection("testing");
+		MongoCollection<Document> collection = database.getCollection("testing");
+		collection.insertOne(
+				new Document("greeting", "hello")
+						.append("name", "foo"));
+		collection.insertOne(
+				new Document("greeting", "hola")
+						.append("name", "bar"));
 	}
 
-	@After
-	public void tearDown() throws Exception {
 
-	}
-
-	@IntegrationTest(value = {"mongodb.collection=testing", "trigger.fixedDelay=1"})
+	@TestPropertySource(properties = "trigger.fixedDelay=1")
 	public static class DefaultTests extends MongodbSourceApplicationTests {
+
 		@Test
 		public void test() throws InterruptedException {
-			Message<?> received = messageCollector.forChannel(source.output()).poll(2, TimeUnit.SECONDS);
-			assertThat(received, CoreMatchers.notNullValue());
-			assertThat(received.getPayload(), Matchers.instanceOf(String.class));
+			Message<?> received =
+					this.messageCollector
+							.forChannel(this.source.output())
+							.poll(10, TimeUnit.SECONDS);
+			assertThat(received, notNullValue());
+			assertThat(received.getPayload(), instanceOf(String.class));
 		}
+
 	}
 
-	@IntegrationTest(value = {"mongodb.collection=testing",  "mongodb.query={ 'greeting': 'hola' }", "trigger.fixedDelay=1"})
+	@TestPropertySource(properties = {
+			"mongodb.query={ 'greeting': 'hola' }",
+			"trigger.fixedDelay=1" })
 	public static class ValidQueryTests extends MongodbSourceApplicationTests {
+
 		@Test
 		public void test() throws InterruptedException {
-			Message<?> received = messageCollector.forChannel(source.output()).poll(2, TimeUnit.SECONDS);
-			assertThat(received, CoreMatchers.notNullValue());
-			assertThat((String)received.getPayload(), CoreMatchers.containsString("hola"));
+			Message<?> received =
+					this.messageCollector
+							.forChannel(this.source.output())
+							.poll(10, TimeUnit.SECONDS);
+			assertThat(received, notNullValue());
+			assertThat((String) received.getPayload(), containsString("hola"));
 		}
+
 	}
 
-	@IntegrationTest(value = {"mongodb.collection=testing", "mongodb.query={ 'greeting': 'bogus' }", "trigger.fixedDelay=1"})
+	@TestPropertySource(properties = {
+			"mongodb.query={ 'greeting': 'bogus' }",
+			"trigger.fixedDelay=1" })
 	public static class InvalidQueryTests extends MongodbSourceApplicationTests {
+
 		@Test
 		public void test() throws InterruptedException {
-			Message<?> received = messageCollector.forChannel(source.output()).poll(2, TimeUnit.SECONDS);
-			assertThat(received, CoreMatchers.nullValue());
+			Message<?> received =
+					this.messageCollector
+							.forChannel(this.source.output())
+							.poll(10, TimeUnit.SECONDS);
+			assertThat(received, nullValue());
 		}
+
 	}
 
-	@IntegrationTest(value = {"mongodb.collection=testing", "trigger.fixedDelay=1", "mongodb.split=false"})
+	@TestPropertySource(properties = {
+			"trigger.fixedDelay=1",
+			"mongodb.split=false" })
 	public static class NoSplitTests extends MongodbSourceApplicationTests {
+
 		@Test
 		public void test() throws InterruptedException {
-			Message<?> received = messageCollector.forChannel(source.output()).poll(2, TimeUnit.SECONDS);
-			assertThat(received, CoreMatchers.notNullValue());
-			assertThat(received.getPayload(), Matchers.instanceOf(List.class));
-			assertThat(received.getPayload().toString(), CoreMatchers.containsString("hola"));
-			assertThat(received.getPayload().toString(), CoreMatchers.containsString("hello"));
+			Message<?> received =
+					this.messageCollector
+							.forChannel(this.source.output())
+							.poll(10, TimeUnit.SECONDS);
+			assertThat(received, notNullValue());
+			assertThat(received.getPayload(), instanceOf(List.class));
+			assertThat(received.getPayload().toString(), containsString("hola"));
+			assertThat(received.getPayload().toString(), containsString("hello"));
 		}
+
 	}
 
-	@IntegrationTest(value = {"mongodb.collection=testing", "trigger.fixedDelay=100"})
-	public static class MongoTriggerTests extends MongodbSourceApplicationTests {
+	@TestPropertySource(properties = {
+			"mongodb.query-expression=new BasicQuery('{ }')" +
+					".limit(1)" +
+					".with(new org.springframework.data.domain.Sort('greeting'))",
+			"trigger.fixedDelay=1",
+			"mongodb.split=false" })
+	public static class QueryDslTests extends MongodbSourceApplicationTests {
+
 		@Test
 		public void test() throws InterruptedException {
-			Message<?> received = messageCollector.forChannel(source.output()).poll(1, TimeUnit.SECONDS);
-			assertThat(received, CoreMatchers.nullValue());
+			Message<?> received =
+					this.messageCollector
+							.forChannel(this.source.output())
+							.poll(10, TimeUnit.SECONDS);
+			assertThat(received, notNullValue());
+			assertThat(received.getPayload(), instanceOf(List.class));
+			assertThat(received.getPayload().toString(), containsString("hello"));
+			assertThat(received.getPayload().toString(), not(containsString("hola")));
 		}
+
 	}
+
 
 	@SpringBootApplication
 	public static class MongoSourceApplication {
 
 	}
-
 
 }
