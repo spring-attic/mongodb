@@ -51,9 +51,7 @@ import com.mongodb.client.MongoDatabase;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(
-		classes = MongodbSourceApplicationTests.MongoSourceApplication.class,
-		properties = {
+@SpringBootTest(properties = {
 				"spring.data.mongodb.port=0",
 				"mongodb.collection=testing"
 		})
@@ -74,8 +72,12 @@ public abstract class MongodbSourceApplicationTests {
 		MongoDatabase database = this.mongo.getDatabase("test");
 		database.createCollection("testing");
 		MongoCollection<Document> collection = database.getCollection("testing");
-		collection.insertOne(new Document("greeting", "hello"));
-		collection.insertOne(new Document("greeting", "hola"));
+		collection.insertOne(
+				new Document("greeting", "hello")
+						.append("name", "foo"));
+		collection.insertOne(
+				new Document("greeting", "hola")
+						.append("name", "bar"));
 	}
 
 
@@ -87,7 +89,7 @@ public abstract class MongodbSourceApplicationTests {
 			Message<?> received =
 					this.messageCollector
 							.forChannel(this.source.output())
-							.poll(2, TimeUnit.SECONDS);
+							.poll(10, TimeUnit.SECONDS);
 			assertThat(received, notNullValue());
 			assertThat(received.getPayload(), instanceOf(String.class));
 		}
@@ -104,7 +106,7 @@ public abstract class MongodbSourceApplicationTests {
 			Message<?> received =
 					this.messageCollector
 							.forChannel(this.source.output())
-							.poll(2, TimeUnit.SECONDS);
+							.poll(10, TimeUnit.SECONDS);
 			assertThat(received, notNullValue());
 			assertThat((String) received.getPayload(), containsString("hola"));
 		}
@@ -121,7 +123,7 @@ public abstract class MongodbSourceApplicationTests {
 			Message<?> received =
 					this.messageCollector
 							.forChannel(this.source.output())
-							.poll(2, TimeUnit.SECONDS);
+							.poll(10, TimeUnit.SECONDS);
 			assertThat(received, nullValue());
 		}
 
@@ -137,25 +139,11 @@ public abstract class MongodbSourceApplicationTests {
 			Message<?> received =
 					this.messageCollector
 							.forChannel(this.source.output())
-							.poll(2, TimeUnit.SECONDS);
+							.poll(10, TimeUnit.SECONDS);
 			assertThat(received, notNullValue());
 			assertThat(received.getPayload(), instanceOf(List.class));
 			assertThat(received.getPayload().toString(), containsString("hola"));
 			assertThat(received.getPayload().toString(), containsString("hello"));
-		}
-
-	}
-
-	@TestPropertySource(properties = "trigger.fixedDelay=100")
-	public static class MongoTriggerTests extends MongodbSourceApplicationTests {
-
-		@Test
-		public void test() throws InterruptedException {
-			Message<?> received =
-					this.messageCollector
-							.forChannel(this.source.output())
-							.poll(1, TimeUnit.SECONDS);
-			assertThat(received, nullValue());
 		}
 
 	}
@@ -173,7 +161,7 @@ public abstract class MongodbSourceApplicationTests {
 			Message<?> received =
 					this.messageCollector
 							.forChannel(this.source.output())
-							.poll(2, TimeUnit.SECONDS);
+							.poll(10, TimeUnit.SECONDS);
 			assertThat(received, notNullValue());
 			assertThat(received.getPayload(), instanceOf(List.class));
 			assertThat(received.getPayload().toString(), containsString("hello"));
