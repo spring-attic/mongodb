@@ -39,7 +39,7 @@ import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -47,10 +47,10 @@ import com.mongodb.client.MongoDatabase;
 
 /**
  * @author Adam Zwickey
- * @author ARtem Bilan
+ * @author Artem Bilan
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest(properties = {
 				"spring.data.mongodb.port=0",
 				"mongodb.collection=testing"
