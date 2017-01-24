@@ -1,0 +1,35 @@
+//tag::ref-doc[]
+= MongoDB Sink
+
+This sink application ingest incoming data into MongoDB.
+This application is fully based on the `MongoDataAutoConfiguration`, so refer to the
+http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-nosql.html#boot-features-mongodb[Spring Boot MongoDB Support]
+for more information.
+
+== Options
+
+The **$$mongodb$$** $$sink$$ has the following options:
+
+//tag::configuration-properties[]
+$$mongodb.collection$$:: $$The MongoDB collection to store data$$ *($$String$$, default: `$$<none>$$`)*
+$$mongodb.collection-expression$$:: $$The SpEL expression to evaluate MongoDB collection against Message$$ *($$String$$, default: `$$<none>$$`)*
+$$spring.data.mongodb.authentication-database$$:: $$Authentication database name.$$ *($$String$$, default: `$$<none>$$`)*
+$$spring.data.mongodb.database$$:: $$Database name.$$ *($$String$$, default: `$$<none>$$`)*
+$$spring.data.mongodb.field-naming-strategy$$:: $$Fully qualified name of the FieldNamingStrategy to use.$$ *($$java.lang.Class<?>$$, default: `$$<none>$$`)*
+$$spring.data.mongodb.grid-fs-database$$:: $$GridFS database name.$$ *($$String$$, default: `$$<none>$$`)*
+$$spring.data.mongodb.host$$:: $$Mongo server host.$$ *($$String$$, default: `$$<none>$$`)*
+$$spring.data.mongodb.password$$:: $$Login password of the mongo server.$$ *($$char[]$$, default: `$$<none>$$`)*
+$$spring.data.mongodb.port$$:: $$Mongo server port.$$ *($$Integer$$, default: `$$<none>$$`)*
+$$spring.data.mongodb.uri$$:: $$Mongo database URI. When set, host and port are ignored.$$ *($$String$$, default: `$$mongodb://localhost/test$$`)*
+$$spring.data.mongodb.username$$:: $$Login user of the mongo server.$$ *($$String$$, default: `$$<none>$$`)*
+//end::configuration-properties[]
+
+Also see the http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html[Spring Boot Documentation] for additional `MongoProperties` properties.
+
+//end::ref-doc[]
+== Build
+
+```
+$> mvn package
+```
+

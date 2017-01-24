@@ -15,6 +15,7 @@
 
 	<modules>
 		<module>spring-cloud-starter-stream-source-mongodb</module>
+		<module>spring-cloud-starter-stream-sink-mongodb</module>
 		<module>mongodb-app-dependencies</module>
 	</modules>
 
