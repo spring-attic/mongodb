@@ -12,7 +12,7 @@
 	
 	<groupId>org.springframework.cloud.stream.app</groupId>
 	<artifactId>mongodb-app-dependencies</artifactId>
-	<version>1.1.2.BUILD-SNAPSHOT</version>
+	<version>1.1.2.M1</version>
 	<packaging>pom</packaging>
 	<name>mongodb-app-dependencies</name>
 	<description>Spring Cloud Stream Mongodb App Dependencies</description>
@@ -33,12 +33,12 @@
 			<dependency>
 				<groupId>org.springframework.cloud.stream.app</groupId>
 				<artifactId>spring-cloud-starter-stream-source-mongodb</artifactId>
-				<version>1.1.2.BUILD-SNAPSHOT</version>
+				<version>1.1.2.M1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud.stream.app</groupId>
 				<artifactId>spring-cloud-starter-stream-sink-mongodb</artifactId>
-				<version>1.1.2.BUILD-SNAPSHOT</version>
+				<version>1.1.2.M1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
