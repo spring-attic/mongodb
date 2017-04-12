@@ -21,6 +21,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.expression.Expression;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * @author Adam Zwickey
@@ -28,6 +29,7 @@ import org.springframework.expression.Expression;
  *
  */
 @ConfigurationProperties("mongodb")
+@Validated
 public class MongodbSourceProperties {
 
 	/**
