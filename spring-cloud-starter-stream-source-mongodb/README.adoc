@@ -6,6 +6,20 @@ This source is fully based on the `MongoDataAutoConfiguration`, so refer to the
 http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-nosql.html#boot-features-mongodb[Spring Boot MongoDB Support]
 for more information.
 
+== Input
+
+N/A 
+
+== Output
+
+==== Headers:
+
+* `Content-Type: text/plain`
+
+==== Payload:
+
+* `String`
+
 == Options
 
 The **$$mongodb$$** $$source$$ has the following options:
@@ -39,6 +53,18 @@ See and `TriggerProperties` for polling options.
 == Build
 
 ```
-$> mvn package
+$ ./mvnw clean install -PgenerateApps
+$ cd apps
+```
+You can find the corresponding binder based projects here.
+You can then cd into one of the folders and build it:
+```
+$ ./mvnw clean package
+```
+
+== Examples
+
+```
+java -jar mongodb-source.jar --mongodb.query= --mongodb.collection=
 ```
 
