@@ -6,6 +6,18 @@ This application is fully based on the `MongoDataAutoConfiguration`, so refer to
 http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-nosql.html#boot-features-mongodb[Spring Boot MongoDB Support]
 for more information.
 
+== Input
+
+=== Headers
+
+=== Payload
+
+* `Any POJO`
+
+== Output
+
+N/A
+
 == Options
 
 The **$$mongodb$$** $$sink$$ has the following options:
@@ -30,6 +42,18 @@ Also see the http://docs.spring.io/spring-boot/docs/current/reference/html/commo
 == Build
 
 ```
-$> mvn package
+$ ./mvnw clean install -PgenerateApps
+$ cd apps
+```
+You can find the corresponding binder based projects here.
+You can then cd into one of the folders and build it:
+```
+$ ./mvnw clean package
 ```
 
+== Examples
+
+```
+java -jar mongodb-sink.jar --mongodb.collection=
+java -jar mongodb-sink.jar --mongodb.collectionExpression=
+```
