@@ -38,7 +38,6 @@ $$spring.data.mongodb.username$$:: $$Login user of the mongo server.$$ *($$Strin
 
 Also see the http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html[Spring Boot Documentation] for additional `MongoProperties` properties.
 
-//end::ref-doc[]
 == Build
 
 ```
@@ -57,3 +56,4 @@ $ ./mvnw clean package
 java -jar mongodb-sink.jar --mongodb.collection=
 java -jar mongodb-sink.jar --mongodb.collectionExpression=
 ```
+//end::ref-doc[]
