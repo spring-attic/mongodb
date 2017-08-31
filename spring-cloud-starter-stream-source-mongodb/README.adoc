@@ -49,7 +49,6 @@ $$trigger.time-unit$$:: $$The TimeUnit to apply to delay values.$$ *($$TimeUnit$
 Also see the http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html[Spring Boot Documentation] for additional `MongoProperties` properties.
 See and `TriggerProperties` for polling options.
 
-//end::ref-doc[]
 == Build
 
 ```
@@ -67,4 +66,4 @@ $ ./mvnw clean package
 ```
 java -jar mongodb-source.jar --mongodb.query= --mongodb.collection=
 ```
-
+//end::ref-doc[]
