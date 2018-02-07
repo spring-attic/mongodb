@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2017-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bson.Document;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -35,7 +36,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.convert.CustomConversions;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.integration.mongodb.store.MessageDocument;
 import org.springframework.integration.mongodb.support.MongoDbMessageBytesConverter;
 import org.springframework.integration.support.MessageBuilder;
@@ -46,10 +47,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.mongodb.DBObject;
-
 /**
  * @author Artem Bilan
+ * @author Chris Schaefer
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
@@ -83,15 +83,12 @@ public abstract class MongoDbSinkApplicationTests {
 			this.sink.input().send(new GenericMessage<>(data2));
 			this.sink.input().send(new GenericMessage<>("{\"my_data\": \"THE DATA\"}"));
 
-			List<DBObject> result =
-					this.mongoTemplate
-							.getCollection(this.mongoDbSinkProperties.getCollection())
-							.find()
-							.toArray();
+			List<Document> result =
+					this.mongoTemplate.findAll(Document.class, mongoDbSinkProperties.getCollection());
 
 			assertEquals(3, result.size());
 
-			DBObject dbObject = result.get(0);
+			Document dbObject = result.get(0);
 			assertNotNull(dbObject.get("_id"));
 			assertEquals(dbObject.get("foo"), "bar");
 			assertNotNull(dbObject.get("_class"));
@@ -138,8 +135,8 @@ public abstract class MongoDbSinkApplicationTests {
 	public static class MongoSinkApplication {
 
 		@Bean
-		public CustomConversions customConversions() {
-			return new CustomConversions(Collections.singletonList(new MongoDbMessageBytesConverter()));
+		public MongoCustomConversions customConversions() {
+			return new MongoCustomConversions(Collections.singletonList(new MongoDbMessageBytesConverter()));
 		}
 
 	}
