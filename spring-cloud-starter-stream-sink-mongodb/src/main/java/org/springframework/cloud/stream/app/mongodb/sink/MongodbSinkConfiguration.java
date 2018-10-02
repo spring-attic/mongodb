@@ -16,6 +16,8 @@
 
 package org.springframework.cloud.stream.app.mongodb.sink;
 
+import java.nio.charset.StandardCharsets;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -81,7 +83,9 @@ public class MongodbSinkConfiguration {
 							contentType.contains("json") ||
 							contentType.contains("x-spring-tuple")) {
 
-						return new MutableMessage<>(new String(((byte[]) message.getPayload())), message.getHeaders());
+						return new MutableMessage<>(
+								new String((byte[]) message.getPayload(), StandardCharsets.UTF_8),
+								message.getHeaders());
 					}
 				}
 				return message;
