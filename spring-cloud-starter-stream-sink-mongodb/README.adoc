@@ -2,9 +2,7 @@
 = MongoDB Sink
 
 This sink application ingest incoming data into MongoDB.
-This application is fully based on the `MongoDataAutoConfiguration`, so refer to the
-http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-nosql.html#boot-features-mongodb[Spring Boot MongoDB Support]
-for more information.
+This application is fully based on the `MongoDataAutoConfiguration`, so refer to the http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-nosql.html#boot-features-mongodb[Spring Boot MongoDB Support] for more information.
 
 == Input
 
@@ -12,7 +10,9 @@ for more information.
 
 === Payload
 
-* `Any POJO`
+* Any POJO
+* `String`
+* `byte[]`
 
 == Output
 
@@ -32,7 +32,7 @@ $$spring.data.mongodb.grid-fs-database$$:: $$GridFS database name.$$ *($$String$
 $$spring.data.mongodb.host$$:: $$Mongo server host. Cannot be set with URI.$$ *($$String$$, default: `$$<none>$$`)*
 $$spring.data.mongodb.password$$:: $$Login password of the mongo server. Cannot be set with URI.$$ *($$Character[]$$, default: `$$<none>$$`)*
 $$spring.data.mongodb.port$$:: $$Mongo server port. Cannot be set with URI.$$ *($$Integer$$, default: `$$<none>$$`)*
-$$spring.data.mongodb.uri$$:: $$Mongo database URI. Cannot be set with host, port and credentials.$$ *($$String$$, default: `$$<none>$$`)*
+$$spring.data.mongodb.uri$$:: $$Mongo database URI. Cannot be set with host, port and credentials.$$ *($$String$$, default: `$$mongodb://localhost/test$$`)*
 $$spring.data.mongodb.username$$:: $$Login user of the mongo server. Cannot be set with URI.$$ *($$String$$, default: `$$<none>$$`)*
 //end::configuration-properties[]
 

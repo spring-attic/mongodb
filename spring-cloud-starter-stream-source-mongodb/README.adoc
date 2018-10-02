@@ -36,7 +36,7 @@ $$spring.data.mongodb.grid-fs-database$$:: $$GridFS database name.$$ *($$String$
 $$spring.data.mongodb.host$$:: $$Mongo server host. Cannot be set with URI.$$ *($$String$$, default: `$$<none>$$`)*
 $$spring.data.mongodb.password$$:: $$Login password of the mongo server. Cannot be set with URI.$$ *($$Character[]$$, default: `$$<none>$$`)*
 $$spring.data.mongodb.port$$:: $$Mongo server port. Cannot be set with URI.$$ *($$Integer$$, default: `$$<none>$$`)*
-$$spring.data.mongodb.uri$$:: $$Mongo database URI. Cannot be set with host, port and credentials.$$ *($$String$$, default: `$$<none>$$`)*
+$$spring.data.mongodb.uri$$:: $$Mongo database URI. Cannot be set with host, port and credentials.$$ *($$String$$, default: `$$mongodb://localhost/test$$`)*
 $$spring.data.mongodb.username$$:: $$Login user of the mongo server. Cannot be set with URI.$$ *($$String$$, default: `$$<none>$$`)*
 $$trigger.cron$$:: $$Cron expression value for the Cron Trigger.$$ *($$String$$, default: `$$<none>$$`)*
 $$trigger.date-format$$:: $$Format for the date value.$$ *($$String$$, default: `$$<none>$$`)*
