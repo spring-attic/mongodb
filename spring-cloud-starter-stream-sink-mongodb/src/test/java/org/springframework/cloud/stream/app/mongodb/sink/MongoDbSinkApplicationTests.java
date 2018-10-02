@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +39,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.integration.mongodb.store.MessageDocument;
-import org.springframework.integration.mongodb.support.MongoDbMessageBytesConverter;
+import org.springframework.integration.mongodb.support.BinaryToMessageConverter;
+import org.springframework.integration.mongodb.support.MessageToBinaryConverter;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.integration.support.MutableMessageBuilder;
 import org.springframework.messaging.Message;
@@ -82,11 +84,12 @@ public abstract class MongoDbSinkApplicationTests {
 			this.sink.input().send(new GenericMessage<>(data1));
 			this.sink.input().send(new GenericMessage<>(data2));
 			this.sink.input().send(new GenericMessage<>("{\"my_data\": \"THE DATA\"}"));
+			this.sink.input().send(new GenericMessage<>("{\"my_data\": \"THE DATA\"}".getBytes()));
 
 			List<Document> result =
 					this.mongoTemplate.findAll(Document.class, mongoDbSinkProperties.getCollection());
 
-			assertEquals(3, result.size());
+			assertEquals(4, result.size());
 
 			Document dbObject = result.get(0);
 			assertNotNull(dbObject.get("_id"));
@@ -100,8 +103,11 @@ public abstract class MongoDbSinkApplicationTests {
 			dbObject = result.get(2);
 			assertNull(dbObject.get("_class"));
 			assertEquals(dbObject.get("my_data"), "THE DATA");
-		}
 
+			dbObject = result.get(3);
+			assertNull(dbObject.get("_class"));
+			assertEquals(dbObject.get("my_data"), "THE DATA");
+		}
 
 
 	}
@@ -136,7 +142,10 @@ public abstract class MongoDbSinkApplicationTests {
 
 		@Bean
 		public MongoCustomConversions customConversions() {
-			return new MongoCustomConversions(Collections.singletonList(new MongoDbMessageBytesConverter()));
+			List<Object> customConverters = new ArrayList<>();
+			customConverters.add(new MessageToBinaryConverter());
+			customConverters.add(new BinaryToMessageConverter());
+			return new MongoCustomConversions(customConverters);
 		}
 
 	}
