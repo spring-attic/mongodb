@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.test.autoconfigure.data.mongo.AutoConfigureDataMongo;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.context.annotation.Bean;
@@ -54,10 +54,8 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Chris Schaefer
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
-		properties = {
-				"spring.data.mongodb.port=0"
-		})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@AutoConfigureDataMongo
 @DirtiesContext
 public abstract class MongoDbSinkApplicationTests {
 
@@ -75,7 +73,8 @@ public abstract class MongoDbSinkApplicationTests {
 
 		@Test
 		public void test() {
-			Map<String, String> data1 = Collections.singletonMap("foo", "bar");
+			Map<String, String> data1 = new HashMap<>();
+			data1.put("foo", "bar");
 
 			Map<String, String> data2 = new HashMap<>();
 			data2.put("firstName", "Foo");
@@ -94,7 +93,6 @@ public abstract class MongoDbSinkApplicationTests {
 			Document dbObject = result.get(0);
 			assertNotNull(dbObject.get("_id"));
 			assertEquals(dbObject.get("foo"), "bar");
-			assertNotNull(dbObject.get("_class"));
 
 			dbObject = result.get(1);
 			assertEquals(dbObject.get("firstName"), "Foo");
