@@ -3,7 +3,7 @@
 
 This sink application ingest incoming data into MongoDB.
 This application is fully based on the `MongoDataAutoConfiguration`, so refer to the
-http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-nosql.html#boot-features-mongodb[Spring Boot MongoDB Support]
+https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-nosql.html#boot-features-mongodb[Spring Boot MongoDB Support]
 for more information.
 
 == Input
@@ -36,7 +36,7 @@ $$spring.data.mongodb.uri$$:: $$Mongo database URI. When set, host and port are 
 $$spring.data.mongodb.username$$:: $$Login user of the mongo server.$$ *($$String$$, default: `$$<none>$$`)*
 //end::configuration-properties[]
 
-Also see the http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html[Spring Boot Documentation] for additional `MongoProperties` properties.
+Also see the https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html[Spring Boot Documentation] for additional `MongoProperties` properties.
 
 == Build
 
