@@ -55,6 +55,12 @@
 					<generatedApps>
 						<mongodb-source />
 					</generatedApps>
+					<enableContainerImageMetadata>true</enableContainerImageMetadata>
+					<metadataSourceTypeFilters>
+						<filter>org.springframework.cloud.stream.app.mongodb.source.MongodbSourceProperties</filter>
+						<filter>org.springframework.boot.autoconfigure.mongo.MongoProperties</filter>
+						<filter>org.springframework.cloud.stream.app.trigger.TriggerPropertiesMaxMessagesDefaultUnlimited</filter>
+					</metadataSourceTypeFilters>
 				</configuration>
 			</plugin>
 		</plugins>
