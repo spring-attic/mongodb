@@ -50,10 +50,6 @@
 						<mongodb-sink/>
 					</generatedApps>
 					<enableContainerImageMetadata>true</enableContainerImageMetadata>
-					<metadataSourceTypeFilters>
-						<filter>org.springframework.cloud.stream.app.mongodb.sink.MongoDbSinkProperties</filter>
-						<filter>org.springframework.boot.autoconfigure.mongo.MongoProperties</filter>
-					</metadataSourceTypeFilters>
 				</configuration>
 			</plugin>
 		</plugins>
